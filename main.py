@@ -12,6 +12,11 @@ class Board:
 					    Box(-1, 8), Box(-1, 9), Box(-1, 10), Box(-1, 11),
 					    Box(-1, 12), Box(-1, 13), Box(-1, 14), Box(-1, 15)]
 
+	def draw(self):
+		message = """|\n|\n|\n|\n|\n|\n|\n|\n|\n|\n|\n|\n|\n|\n|\n|\n|\n"""
+
+		print(message)
+
 	def getEmptyPositions(self):
 		positions = []
 
@@ -27,5 +32,8 @@ class Board:
 def main():
 	board = Board()
 	board.createRandom()
+	board.draw()
 
 main()
+
+#C:\%HOMEPATH%\Desktop\Python\2048
