@@ -7,15 +7,61 @@ class Box:
 
 class Board:
 	def __init__(self):
-		self.boxList = [Box(-1, 0), Box(-1, 1), Box(-1, 2), Box(-1, 3),
-					    Box(-1, 4), Box(-1, 5), Box(-1, 6), Box(-1, 7),
-					    Box(-1, 8), Box(-1, 9), Box(-1, 10), Box(-1, 11),
-					    Box(-1, 12), Box(-1, 13), Box(-1, 14), Box(-1, 15)]
+		self.boxList = []
+
+		for i in range(16):
+			self.boxList.append(Box(-1, i))
 
 	def draw(self):
-		message = """|\n|\n|\n|\n|\n|\n|\n|\n|\n|\n|\n|\n|\n|\n|\n|\n|\n"""
+		numberList = []
+		for box in self.boxList:
+			numberList.append(box.number)
 
-		print(message)
+		space1 = ""
+		space2 = ""
+
+		space3 = ""
+		space4 = ""
+
+		space5 = ""
+		space6 = ""
+
+		line1 = "-----------------------------------------"
+		line2 = "|         |         |         |         |"
+		line3 = f"|    {numberList[0]}    |    {numberList[1]}    |    {numberList[2]}    |    {numberList[3]}    |"
+		line4 = "|         |         |         |         |"
+		line5 = "|---------|---------|---------|---------|"
+		line6 = "|         |         |         |         |"
+		line7 = "|    {}    |    {}    |    {}    |    {}    |"
+		line8 = "|         |         |         |         |"
+		line9 = "|---------|---------|---------|---------|"
+		line10 = "|         |         |         |         |"
+		line11 = "|    {}    |    {}    |    {}    |    {}    |"
+		line12 = "|         |         |         |         |"
+		line13 = "|---------|---------|---------|---------|"
+		line14 = "|         |         |         |         |"
+		line15 = "|    {}    |    {}    |    {}    |    {}    |"
+		line16 = "|         |         |         |         |"
+		line17 = "-----------------------------------------"
+
+		print(line1)
+		print(line2)
+		print(line3)
+		print(line4)
+		print(line5)
+		print(line6)
+		print(line7)
+		print(line8)
+		print(line9)
+		print(line10)
+		print(line11)
+		print(line12)
+		print(line13)
+		print(line14)
+		print(line15)
+		print(line16)
+		print(line17)
+
 
 	def getEmptyPositions(self):
 		positions = []
