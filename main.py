@@ -37,3 +37,4 @@ def main():
 main()
 
 #C:\%HOMEPATH%\Desktop\Python\2048
+#C:\Users\s12710216\AppData\Local\Git\bin\git.exe
