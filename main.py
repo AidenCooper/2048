@@ -17,51 +17,27 @@ class Board:
 		for box in self.boxList:
 			numberList.append(box.number)
 
-		space1 = ""
-		space2 = ""
-
-		space3 = ""
-		space4 = ""
-
-		space5 = ""
-		space6 = ""
-
-		line1 = "-----------------------------------------"
-		line2 = "|         |         |         |         |"
-		line3 = f"|    {numberList[0]}    |    {numberList[1]}    |    {numberList[2]}    |    {numberList[3]}    |"
-		line4 = "|         |         |         |         |"
-		line5 = "|---------|---------|---------|---------|"
-		line6 = "|         |         |         |         |"
-		line7 = "|    {}    |    {}    |    {}    |    {}    |"
-		line8 = "|         |         |         |         |"
-		line9 = "|---------|---------|---------|---------|"
-		line10 = "|         |         |         |         |"
-		line11 = "|    {}    |    {}    |    {}    |    {}    |"
-		line12 = "|         |         |         |         |"
-		line13 = "|---------|---------|---------|---------|"
-		line14 = "|         |         |         |         |"
-		line15 = "|    {}    |    {}    |    {}    |    {}    |"
-		line16 = "|         |         |         |         |"
-		line17 = "-----------------------------------------"
-
-		print(line1)
-		print(line2)
-		print(line3)
-		print(line4)
-		print(line5)
-		print(line6)
-		print(line7)
-		print(line8)
-		print(line9)
-		print(line10)
-		print(line11)
-		print(line12)
-		print(line13)
-		print(line14)
-		print(line15)
-		print(line16)
-		print(line17)
-
+		display = [[' ' for i in range(17)] for j in range(41)]
+	
+		for y in range(17):
+			line = ""
+			for x in range(41):
+				if y%4==0:
+					if y == 0 or y == 16:
+						display[x][y] = '-'
+					else:
+						if x%10==0:
+							display[x][y] = '|'
+						else:
+							display[x][y] = '-'
+				elif y%4==2:
+					if x%10 == 0:
+						display[x][y] = '|'
+				elif y%4==1 or y%4==3:
+					if x%10==0:
+						display[x][y] = '|'
+				line += display[x][y]
+			print(line)
 
 	def getEmptyPositions(self):
 		positions = []
