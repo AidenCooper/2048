@@ -7,36 +7,38 @@ class Box:
 
 class Board:
 	def __init__(self):
-		self.boxList = []
+		self.boxList = [Box(-1, i) for i in range(16)]
+		self.display = [[' ' for i in range(17)] for j in range(41)]
 
-		for i in range(16):
-			self.boxList.append(Box(-1, i))
-
-	def draw(self):
+		# Display Board
 		numberList = []
 		for box in self.boxList:
 			numberList.append(box.number)
 
-		display = [[' ' for i in range(17)] for j in range(41)]
+		self.display = [[' ' for i in range(17)] for j in range(41)]
 	
 		for y in range(17):
-			line = ""
 			for x in range(41):
 				if y%4==0:
 					if y == 0 or y == 16:
-						display[x][y] = '-'
+						self.display[x][y] = '-'
 					else:
 						if x%10==0:
-							display[x][y] = '|'
+							self.display[x][y] = '|'
 						else:
-							display[x][y] = '-'
+							self.display[x][y] = '-'
 				elif y%4==2:
 					if x%10 == 0:
-						display[x][y] = '|'
+						self.display[x][y] = '|'
 				elif y%4==1 or y%4==3:
 					if x%10==0:
-						display[x][y] = '|'
-				line += display[x][y]
+						self.display[x][y] = '|'
+
+	def draw(self):
+		for y in range(17):
+			line = ""
+			for x in range(41):
+				line += self.display[x][y]
 			print(line)
 
 	def getEmptyPositions(self):
