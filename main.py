@@ -1,4 +1,23 @@
+from enum import Enum
 import random
+
+class Position(Enum):
+	First = [5, 2]
+	Second = [15, 2]
+	Third = [25, 2]
+	Fourth = [35, 2]
+	Fifth = [5, 6]
+	Sixth = [15, 6]
+	Seventh = [25, 6]
+	Eigth = [35, 6]
+	Ninth = [5, 10]
+	Tenth = [15, 10]
+	Eleventh = [15, 10]
+	Twelfth = [15, 10]
+	Thirteenth = [5, 14]
+	Fourteenth = [15, 14]
+	Fifteenth = [25, 14]
+	Sixteenth = [35, 14]
 
 class Box:
 	def __init__(self, number, position):
@@ -7,7 +26,8 @@ class Box:
 
 class Board:
 	def __init__(self):
-		self.boxList = [Box(-1, i) for i in range(16)]
+
+		self.boxList = [Box(-1, position) for position in Position]
 		self.display = [[' ' for i in range(17)] for j in range(41)]
 
 		# Display Board
@@ -34,28 +54,47 @@ class Board:
 					if x%10==0:
 						self.display[x][y] = '|'
 
+
 	def draw(self):
 		for y in range(17):
 			line = ""
 			for x in range(41):
-				line += self.display[x][y]
+				line += str(self.display[x][y])
 			print(line)
 
-	def getEmptyPositions(self):
-		positions = []
+	def setPosition(self, box, toPos):
+		if(box.number == -1):
+			return
 
-		for box in self.boxList:
-			if box.number == -1:
-				positions.append(box.position)
-		return positions
+		length = len(str(box.number))
 
-	def createRandom(self):
-		positionsAvailable = self.getEmptyPositions()
-		position = positionsAvailable[random.randint(0, len(positionsAvailable) - 1)]
+		if length == 1:
+			self.display[toPos.value[0]][toPos.value[1]] =  box.number
+		elif length % 3 == 0:
+			sideLength = length % 2
+
+			index = 0
+			for i in range(toPos.value[0] - sideLength, toPos.value[0] + sideLength + 1):
+				self.display[i][toPos.value[1]] = str(box.number)[index]
+				index += 1
+		else:
+			if(length == 2):
+				self.display[toPos.value[0] - 1][toPos.value[1]] = int(str(box.number)[0])
+				self.display[toPos.value[0]][toPos.value[1]] = int(str(box.number)[1])
+			else:
+				number = str(box.number)[1:len(str(box.number))]
+				newLength = len(str(number)) 
+				sideLength = newLength % 2
+
+				index = 0
+				for i in range(toPos.value[0] - sideLength - 1, toPos.value[0] + sideLength + 1):
+					self.display[i][toPos.value[1]] = str(box.number)[index]
+					index += 1
+
+		box.position = toPos
 
 def main():
 	board = Board()
-	board.createRandom()
 	board.draw()
 
 main()
