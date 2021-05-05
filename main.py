@@ -19,6 +19,9 @@ class Position(Enum):
 	Fifteenth = [25, 14]
 	Sixteenth = [35, 14]
 
+	def randomPosition(self):
+		return random.choice([position.value for position in Position])
+
 class Box:
 	def __init__(self, number, position):
 		self.number = number
@@ -93,8 +96,32 @@ class Board:
 
 		box.position = toPos
 
+	def createRandomBox(self):
+		number = -1
+
+		if random.randint(1, 11) < 10:
+			number = 2
+		else:
+			number = 4
+
+		list = []
+		for box in self.boxList:
+			if(box.number == -1):
+				list.append(box.position)
+
+		position = random.choice(list)
+
+		self.createBox(Box(number, position))
+
+	def createBox(self, box):
+		self.display[box.position.value[0]][box.position.value[1]] = box.number
+
 def main():
 	board = Board()
+
+	board.createRandomBox()
+	board.createRandomBox()
+
 	board.draw()
 
 main()
