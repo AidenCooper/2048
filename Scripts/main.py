@@ -65,9 +65,12 @@ class Board:
 	
 	storage = []
 
-box = Box(2)
+box = Box(128)
 
 while True:
+	if box.number == 2048:
+		sys.exit()
+
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT:
 			sys.exit()
