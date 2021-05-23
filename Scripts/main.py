@@ -6,18 +6,6 @@ import numpy
 
 pygame.init()
 
-BACKGROUND = 250, 248, 239
-SPEED = [2, 2]
-FPS = 30
-SIZE = WIDTH, HEIGHT = 480, 668
-
-SCREEN = pygame.display.set_mode(SIZE)
-
-GRID = pygame.image.load("../Images/grid.png")
-TITLE = pygame.image.load("../Images/title.png")
-
-SCORE = 0
-
 class Box:
 	def __init__(self, number):
 		self.number = number
@@ -37,7 +25,8 @@ class Box:
 class Board:
 	def __init__(self):
 		self.storage = [Box(0), Box(0), Box(0), Box(0), Box(0), Box(0), Box(0), Box(0), Box(0), Box(0), Box(0), Box(0), Box(0), Box(0), Box(0), Box(0)]
-		
+		self.points = 0
+
 		self.addRandomBox()
 		self.addRandomBox()
 
@@ -298,12 +287,29 @@ class Board:
 			if row[i].number == row[i + 1].number:
 				row[i].number *= 2
 				row[i + 1].number = 0
+
+				self.points += row[i].number
 		return row
 
 	def canMove(self):
 		return True
 
 board = Board()
+
+BACKGROUND = 250, 248, 239
+SIZE = WIDTH, HEIGHT = 480, 668
+
+SCREEN = pygame.display.set_mode(SIZE)
+
+FONT = pygame.font.SysFont("bell mt.ttf", 32)
+
+GRID = pygame.image.load("../Images/grid.png")
+TITLE = pygame.image.load("../Images/title.png")
+SCORE = pygame.image.load("../Images/score.png")
+
+POINTS = FONT.render(str(board.points), True, (255, 255, 255))
+POINTS_RECT = POINTS.get_rect(center=((SCREEN.get_width() / 2) - 5, (TITLE.get_height() / 2 - TITLE.get_height() / 4) + (SCORE.get_height() * 2.5)))
+
 
 while True:
 	for box in board.storage:
@@ -321,49 +327,25 @@ while True:
 			if event.key == pygame.K_w or event.key == pygame.K_UP:
 				if board.moveUp():
 					board.addRandomBox()
-					
-					print(f"{board.storage[0].number} {board.storage[1].number} {board.storage[2].number} {board.storage[3].number}")
-					print(f"{board.storage[4].number} {board.storage[5].number} {board.storage[6].number} {board.storage[7].number}")
-					print(f"{board.storage[8].number} {board.storage[9].number} {board.storage[10].number} {board.storage[11].number}")
-					print(f"{board.storage[12].number} {board.storage[13].number} {board.storage[14].number} {board.storage[15].number}")
-
-					print(" ")
 			elif event.key == pygame.K_s or event.key == pygame.K_DOWN:
 				if board.moveDown():
 					board.addRandomBox()
-					
-					print(f"{board.storage[0].number} {board.storage[1].number} {board.storage[2].number} {board.storage[3].number}")
-					print(f"{board.storage[4].number} {board.storage[5].number} {board.storage[6].number} {board.storage[7].number}")
-					print(f"{board.storage[8].number} {board.storage[9].number} {board.storage[10].number} {board.storage[11].number}")
-					print(f"{board.storage[12].number} {board.storage[13].number} {board.storage[14].number} {board.storage[15].number}")
-
-					print(" ")
 			elif event.key == pygame.K_a or event.key == pygame.K_LEFT:
 				if board.moveLeft():
 					board.addRandomBox()
-					
-					print(f"{board.storage[0].number} {board.storage[1].number} {board.storage[2].number} {board.storage[3].number}")
-					print(f"{board.storage[4].number} {board.storage[5].number} {board.storage[6].number} {board.storage[7].number}")
-					print(f"{board.storage[8].number} {board.storage[9].number} {board.storage[10].number} {board.storage[11].number}")
-					print(f"{board.storage[12].number} {board.storage[13].number} {board.storage[14].number} {board.storage[15].number}")
-
-					print(" ")
 			elif event.key == pygame.K_d or event.key == pygame.K_RIGHT:
 				if board.moveRight():
 					board.addRandomBox()
-					
-					print(f"{board.storage[0].number} {board.storage[1].number} {board.storage[2].number} {board.storage[3].number}")
-					print(f"{board.storage[4].number} {board.storage[5].number} {board.storage[6].number} {board.storage[7].number}")
-					print(f"{board.storage[8].number} {board.storage[9].number} {board.storage[10].number} {board.storage[11].number}")
-					print(f"{board.storage[12].number} {board.storage[13].number} {board.storage[14].number} {board.storage[15].number}")
-
-					print(" ")
 
 	SCREEN.fill(BACKGROUND)
 
+	POINTS = FONT.render(str(board.points), True, (255, 255, 255))
+	POINTS_RECT = POINTS.get_rect(center=(SCREEN.get_width() / 2, TITLE.get_height() * 3)) 
 
 	SCREEN.blit(GRID, [0, SCREEN.get_height() - GRID.get_height()])
-	SCREEN.blit(TITLE, [(SCREEN.get_width() / 2) - (TITLE.get_width() / 2), (SCREEN.get_height() - GRID.get_height()) - (TITLE.get_height() + (TITLE.get_height() / 2))])
+	SCREEN.blit(TITLE, [(SCREEN.get_width() / 2) - (TITLE.get_width() / 2), TITLE.get_height() / 2 - TITLE.get_height() / 4])
+	SCREEN.blit(SCORE, [(SCREEN.get_width() / 2) - (SCORE.get_width() / 2), (TITLE.get_height() / 2 - TITLE.get_height() / 4) + (SCORE.get_height() * 2)])
+	SCREEN.blit(POINTS, POINTS_RECT)
 
 	for index in range(16):
 		SCREEN.blit(board.storage[index].getImage(), board.getPosition(index + 1))
@@ -371,4 +353,4 @@ while True:
 	pygame.display.flip()
 
 # C:\%HOMEPATH%\Desktop\Python\2048\Scripts
-# C:\Users\s12710216\AppData\Local\Git\bin\git.exe
+# C:\%APPDATA%\Local\Git\bin\git.exe
