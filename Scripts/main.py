@@ -14,7 +14,7 @@ class Box:
 		return self.number
 
 	def getImage(self):
-		return pygame.image.load(f"../Images/{self.number}.png")
+		return pygame.image.load(f"../Assets/{self.number}.png")
 
 	def duplicate(self):
 		if self.number == 0:
@@ -303,9 +303,9 @@ SCREEN = pygame.display.set_mode(SIZE)
 
 FONT = pygame.font.SysFont("bell mt.ttf", 32)
 
-GRID = pygame.image.load("../Images/grid.png")
-TITLE = pygame.image.load("../Images/title.png")
-SCORE = pygame.image.load("../Images/score.png")
+GRID = pygame.image.load("../Assets/grid.png")
+TITLE = pygame.image.load("../Assets/title.png")
+SCORE = pygame.image.load("../Assets/score.png")
 
 POINTS = FONT.render(str(board.points), True, (255, 255, 255))
 POINTS_RECT = POINTS.get_rect(center=((SCREEN.get_width() / 2) - 5, (TITLE.get_height() / 2 - TITLE.get_height() / 4) + (SCORE.get_height() * 2.5)))
@@ -352,5 +352,10 @@ while True:
 
 	pygame.display.flip()
 
-# C:\%HOMEPATH%\Desktop\Python\2048\Scripts
-# C:\%APPDATA%\Local\Git\bin\git.exe
+# C:%HOMEPATH%\Desktop\Python\2048\Scripts
+# C:\Users\s12710216\AppData\Local\Git\bin\git.exe
+
+#41
+#36
+#31
+#26
