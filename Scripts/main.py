@@ -314,7 +314,8 @@ POINTS_RECT = POINTS.get_rect(center=((SCREEN.get_width() / 2) - 5, (TITLE.get_h
 while True:
 	for box in board.storage:
 		if box.number == 2048:
-			sys.exit()
+			#sys.exit()
+			pass
 
 	if board.canMove() == False:
 		sys.exit()
