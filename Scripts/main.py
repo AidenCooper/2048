@@ -356,7 +356,4 @@ while True:
 # C:%HOMEPATH%\Desktop\Python\2048\Scripts
 # C:\Users\s12710216\AppData\Local\Git\bin\git.exe
 
-#41
-#36
-#31
-#26
+# dru is a daddy
