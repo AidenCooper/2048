@@ -1,4 +1,3 @@
-from pygame.constants import KEYDOWN
 import game
 from game import pygame
 from sys import exit
@@ -50,7 +49,7 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 exit()
-            elif event.type == KEYDOWN:
+            elif event.type == pygame.constants.KEYDOWN:
                 if event.key == pygame.K_w or event.key == pygame.K_UP:
                     board.move_grid("up")
                 elif event.key == pygame.K_s or event.key == pygame.K_DOWN:
@@ -80,3 +79,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# implement box.slide() animation
+# implement right up and down grid movement
+# implement can_move()

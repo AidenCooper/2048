@@ -20,7 +20,6 @@ class Box:
         return path + str(self.number) + ".png"
 
     def slide(self, location_from, location_to):
-        # Implement slide animation
         return
 
 
@@ -90,6 +89,7 @@ class Board:
     def move_grid(self, direction):
         grid = deepcopy(self.grid)
         self.print_grid(grid)
+
         # direction Left = default
         if direction == "right":
             grid = grid[::-1]
