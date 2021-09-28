@@ -38,11 +38,13 @@ def main():
     TITLE_RECT.centerx = GRID_RECT.centerx
     TITLE_RECT.bottom = GRID_RECT.top - 15
 
-    BOXES = [pygame.image.load(box.get_image(path)) for box in board.get_list()]
+    BOXES = [pygame.image.load(box.get_image(path))
+             for box in board.get_list()]
     BOXES_RECT = [BOX.get_rect() for BOX in BOXES]
     for i in range(len(BOXES)):
         size = board.get_box(i).current_position
-        BOXES_RECT[i].topleft = GRID_RECT.left + size[0], GRID_RECT.top + size[1]
+        BOXES_RECT[i].topleft = GRID_RECT.left + \
+            size[0], GRID_RECT.top + size[1]
 
     while board.can_move():
         for event in pygame.event.get():
@@ -50,16 +52,17 @@ def main():
                 exit()
             elif event.type == KEYDOWN:
                 if event.key == pygame.K_w or event.key == pygame.K_UP:
-                    board.move_up()
+                    board.move_grid("up")
                 elif event.key == pygame.K_s or event.key == pygame.K_DOWN:
-                    board.move_down()
+                    board.move_grid("down")
                 elif event.key == pygame.K_a or event.key == pygame.K_LEFT:
-                    board.move_left()
+                    board.move_grid("left")
                 elif event.key == pygame.K_d or event.key == pygame.K_RIGHT:
-                    board.move_right()
+                    board.move_grid("right")
 
         if board.update:
-            BOXES = [pygame.image.load(box.get_image(path)) for box in board.get_list()]
+            BOXES = [pygame.image.load(box.get_image(path))
+                     for box in board.get_list()]
             board.update = False
 
         screen.fill(BACKGROUND)

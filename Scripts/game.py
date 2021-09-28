@@ -1,24 +1,33 @@
+from copy import deepcopy
 from itertools import chain
 from random import choice
 from random import randint
 
 import pygame
 
+
 class Box:
     def __init__(self, number, position):
         self.number = number
         self.position = position
-        self.current_position = ((self.position // 4) * 117) + 13, ((self.position % 4) * 117) + 13
-    
+
+        # For sliding animation
+        self.current_position = ((position % 4) * 117) + \
+            13, ((position // 4) * 117) + 13
+        self.velocity = 0, 0
+
     def get_image(self, path):
         return path + str(self.number) + ".png"
-    
+
     def slide(self, location_from, location_to):
+        # Implement slide animation
         return
-    
+
+
 class Board:
     def __init__(self):
-        self.grid = list(map(lambda i: [Box(0, i), Box(0, i + 1), Box(0, i + 2), Box(0, i + 3)], [0, 4, 8, 12]))
+        self.grid = list(map(lambda i: [Box(0, i), Box(
+            0, i + 1), Box(0, i + 2), Box(0, i + 3)], [0, 4, 8, 12]))
         self.points = 0
         self.update = False
 
@@ -26,6 +35,14 @@ class Board:
         self.add_random_box()
 
     # Helper functions
+    def print_grid(self, grid):
+        for array in grid:
+            temp = []
+            for box in array:
+                temp.append(box.number)
+            print(temp)
+        print(" ")
+
     def update_grid(self):
         for i, array in enumerate(self.grid):
             for j, box in enumerate(array):
@@ -46,7 +63,7 @@ class Board:
 
     def get_list(self):
         return list(chain.from_iterable(self.grid))
-    
+
     def get_position_location(self, position):
         return ((position // 4) * 117) + 13, ((position % 4) * 117) + 13
 
@@ -56,12 +73,13 @@ class Board:
         for box in self.get_list():
             if box.number == 0:
                 empty_positions.append(box.position)
-        
+
         if not empty_positions:
             return False
-        
+
         position = choice(empty_positions)
         number = 2 if randint(1, 11) <= 9 else 4
+
         self.get_box(position).number = number
 
         return True
@@ -69,30 +87,44 @@ class Board:
     def can_move(self):
         return True
 
-    def _move_array(self, grid):
+    def move_grid(self, direction):
+        grid = deepcopy(self.grid)
+        self.print_grid(grid)
+        # direction Left = default
+        if direction == "right":
+            grid = grid[::-1]
+            print("Right")
+        elif direction == "up":
+            print("Up")
+        elif direction == "down":
+            print("Down")
+
+        self.print_grid(grid)
+
         modified = []
         for array in grid:
-            print("Test")
-        return modified
+            for i in range(1, len(array)):
+                if array[i].number == 0:
+                    continue
+                for j in range(i - 1, -1, -1):
+                    if array[j].number == 0 and not j == 0:
+                        continue
+                    elif array[j].number == 0 and j == 0:
+                        array[j].number = array[i].number
+                        array[i].number = 0
+                        break
+                    elif not array[j].number == array[i].number and j + 1 == i:
+                        break
+                    elif array[j].number == array[i].number:
+                        array[j].number *= 2
+                        array[i].number = 0
+                        break
+                    elif not array[j].number == array[i].number and not j + 1 == i:
+                        array[j + 1] = array[i].number
+                        array[i].number = 0
+                        break
+            modified.append(array)
 
-    def move_up(self):
-        return
-    
-    def move_down(self):
-        return
-    
-    def move_left(self):
-        grid = self.grid[::-1]
-        grid = self._move_array(grid)
-
-        self.grid = grid
-        self.update_grid()
-        return
-
-    def move_right(self):
-        grid = self.grid
-        grid = self._move_array(grid)
-        return
-
-    def slide_box(self, position_from, position_to):
-        return
+        self.print_grid(modified)
+        self.grid = deepcopy(modified)
+        self.update = True
