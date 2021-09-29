@@ -58,6 +58,12 @@ def main():
                     board.move_grid("left")
                 elif event.key == pygame.K_d or event.key == pygame.K_RIGHT:
                     board.move_grid("right")
+                else:
+                    continue
+
+                board.add_random_box()
+
+        [box.move_box_location() for box in board.get_list()]
 
         if board.update:
             BOXES = [pygame.image.load(box.get_image(path))
@@ -80,6 +86,7 @@ def main():
 if __name__ == "__main__":
     main()
 
-# implement box.slide() animation
-# implement right up and down grid movement
-# implement can_move()
+# TODO
+# Fix image and position rendering for slide support
+# Implement box.slide() animation
+# Implement can_move()

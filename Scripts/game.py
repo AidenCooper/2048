@@ -20,7 +20,12 @@ class Box:
         return path + str(self.number) + ".png"
 
     def slide(self, location_from, location_to):
-        return
+        self.velocity = [location_from[0] - location_to[0],
+                         location_from[1] - location_to[1]]
+
+    def move_box_location(self):
+        self.current_position[0] += self.velocity[0]
+        self.current_position[1] += self.velocity[1]
 
 
 class Board:
@@ -88,18 +93,14 @@ class Board:
 
     def move_grid(self, direction):
         grid = deepcopy(self.grid)
-        self.print_grid(grid)
 
         # direction Left = default
         if direction == "right":
-            grid = grid[::-1]
-            print("Right")
+            grid = [array[::-1] for array in grid]
         elif direction == "up":
-            print("Up")
+            grid = list(map(list, list(zip(*grid))))
         elif direction == "down":
-            print("Down")
-
-        self.print_grid(grid)
+            grid = list(map(list, list(zip(*grid[::-1]))))
 
         modified = []
         for array in grid:
@@ -110,21 +111,30 @@ class Board:
                     if array[j].number == 0 and not j == 0:
                         continue
                     elif array[j].number == 0 and j == 0:
-                        array[j].number = array[i].number
-                        array[i].number = 0
+                        # array[j].number = array[i].number
+                        # array[i].number = 0
                         break
                     elif not array[j].number == array[i].number and j + 1 == i:
                         break
                     elif array[j].number == array[i].number:
-                        array[j].number *= 2
-                        array[i].number = 0
+                        # array[j].number *= 2
+                        # array[i].number = 0
                         break
                     elif not array[j].number == array[i].number and not j + 1 == i:
-                        array[j + 1] = array[i].number
-                        array[i].number = 0
+                        # array[j + 1].number = array[i].number
+                        # array[i].number = 0
                         break
             modified.append(array)
 
-        self.print_grid(modified)
-        self.grid = deepcopy(modified)
+        grid = modified
+
+        # direction Left = default
+        if direction == "right":
+            grid = [array[::-1] for array in grid]
+        elif direction == "up":
+            grid = list(map(list, list(zip(*grid))))
+        elif direction == "down":
+            grid = list(map(list, list(zip(*grid))[::-1]))
+
+        self.grid = grid
         self.update = True
