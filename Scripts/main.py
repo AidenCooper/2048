@@ -1,13 +1,15 @@
 import game
-from game import pygame
+import pygame
 from sys import exit
 from os import getcwd
 
 
 def main():
+    # Initialize game and board
     pygame.init()
     board = game.Board()
 
+    # Set the settings for graphics
     BACKGROUND = 250, 248, 239
     FONT = pygame.font.SysFont("bell mt.ttf", 32)
     FPS = 30
@@ -15,61 +17,73 @@ def main():
 
     screen = pygame.display.set_mode(SIZE)
 
+    # Find Asset path from where your running
     path = ".\\Assets\\"
     if "Scripts" in getcwd():
         path = "..\\Assets\\"
 
+    BOXES = []
+    for box in board.get_grid_as_list():
+        if box.number == 0:
+            BOXES.append(pygame.image.load(
+                box.get_image(path)).convert_alpha())
+        else:
+            BOXES.append(pygame.image.load(box.get_image(path)))
     GRID = pygame.image.load(board.get_grid_image(path))
+    SCORE = pygame.image.load(board.get_score_image(path))
+    SCORE_TEXT = FONT.render(str(board.points), True, (255, 255, 255))
+    TITLE = pygame.image.load(board.get_title_image(path))
+
+    # Constant position/size rectangles
     GRID_RECT = GRID.get_rect()
     GRID_RECT.bottom = SIZE[1]
 
-    SCORE = pygame.image.load(board.get_score_image(path))
     SCORE_RECT = SCORE.get_rect()
     SCORE_RECT.topright = SIZE[0] - 10, 10
 
-    SCORE_TEXT = FONT.render(str(board.points), True, (255, 255, 255))
     SCORE_TEXT_RECT = SCORE_TEXT.get_rect()
     SCORE_TEXT_RECT.centerx = SCORE_RECT.centerx
     SCORE_TEXT_RECT.top = SCORE_RECT.centery
 
-    TITLE = pygame.image.load(board.get_title_image(path))
     TITLE_RECT = TITLE.get_rect()
     TITLE_RECT.centerx = GRID_RECT.centerx
     TITLE_RECT.bottom = GRID_RECT.top - 15
 
-    BOXES = [pygame.image.load(box.get_image(path))
-             for box in board.get_list()]
-    BOXES_RECT = [BOX.get_rect() for BOX in BOXES]
-    for i in range(len(BOXES)):
-        size = board.get_box(i).current_position
-        BOXES_RECT[i].topleft = GRID_RECT.left + \
-            size[0], GRID_RECT.top + size[1]
-
-    while board.can_move():
+    # Run game loop
+    while board.can_move_box():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 exit()
             elif event.type == pygame.constants.KEYDOWN:
                 if event.key == pygame.K_w or event.key == pygame.K_UP:
-                    board.move_grid("up")
+                    board.move_boxes("up")
                 elif event.key == pygame.K_s or event.key == pygame.K_DOWN:
-                    board.move_grid("down")
+                    board.move_boxes("down")
                 elif event.key == pygame.K_a or event.key == pygame.K_LEFT:
-                    board.move_grid("left")
+                    board.move_boxes("left")
                 elif event.key == pygame.K_d or event.key == pygame.K_RIGHT:
-                    board.move_grid("right")
+                    board.move_boxes("right")
                 else:
                     continue
 
                 board.add_random_box()
 
-        [box.move_box_location() for box in board.get_list()]
+        # Update non constant rectangles and box images
+        BOXES_RECT = []
+        for i in range(len(BOXES)):
+            if board.get_grid_as_list()[i].update_image:
+                BOXES[i] = pygame.image.load(
+                    board.get_grid_as_list()[i].get_image(path))
+                board.get_grid_as_list()[i].update_image = False
 
-        if board.update:
-            BOXES = [pygame.image.load(box.get_image(path))
-                     for box in board.get_list()]
-            board.update = False
+            board.get_grid_as_list()[i].velocity_move()
 
+            BOX_RECT = BOXES[i].get_rect().topleft = GRID_RECT.left + \
+                board.get_grid_as_list()[i].current_position[0], GRID_RECT.top + \
+                board.get_grid_as_list()[i].current_position[1]
+            BOXES_RECT.append(BOX_RECT)
+
+        # Display Graphics
         screen.fill(BACKGROUND)
 
         screen.blit(GRID, GRID_RECT)
@@ -79,6 +93,7 @@ def main():
 
         [screen.blit(BOXES[i], BOXES_RECT[i]) for i in range(len(BOXES))]
 
+        # Pygame Updates
         pygame.display.update()
         pygame.time.Clock().tick(FPS)
 
@@ -87,6 +102,4 @@ if __name__ == "__main__":
     main()
 
 # TODO
-# Fix image and position rendering for slide support
-# Implement box.slide() animation
-# Implement can_move()
+# Add slide support : Fix board movement logic, box current position movement update, slide animation
