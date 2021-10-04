@@ -46,28 +46,25 @@ def main():
     TITLE_RECT.centerx = GRID_RECT.centerx
     TITLE_RECT.bottom = GRID_RECT.top - 15
 
+    box1 = board.get_grid_as_list()[0]
+    box2 = board.get_grid_as_list()[4]
+    box3 = board.get_grid_as_list()[8]
+    box4 = board.get_grid_as_list()[12]
+
+    box1.number = 2
+    box2.number = 2
+    box3.number = 0
+    box4.number = 4
+
+    box1.update_image = True
+    box2.update_image = True
+    box3.update_image = True
+    box4.update_image = True
+
+    board.print_grid(board.grid)
+
     # Run game loop
     while board.can_move_box():
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                exit()
-            elif event.type == pygame.constants.KEYDOWN:
-                if event.key == pygame.K_w or event.key == pygame.K_UP:
-                    board.move_boxes("up")
-                elif event.key == pygame.K_s or event.key == pygame.K_DOWN:
-                    board.move_boxes("down")
-                elif event.key == pygame.K_a or event.key == pygame.K_LEFT:
-                    board.move_boxes("left")
-                elif event.key == pygame.K_d or event.key == pygame.K_RIGHT:
-                    board.move_boxes("right")
-                else:
-                    continue
-
-                for box in board.get_grid_as_list():
-                    box.slide_frames = 0
-
-                board.add_random_box()
-
         # Update non constant rectangles and box images
         BOXES_RECT = []
         for i in range(len(BOXES)):
@@ -82,6 +79,30 @@ def main():
                 board.get_grid_as_list()[i].current_location[0], GRID_RECT.top + \
                 board.get_grid_as_list()[i].current_location[1]
             BOXES_RECT.append(BOX_RECT)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                exit()
+            elif event.type == pygame.constants.KEYDOWN:
+                direction = None
+
+                if event.key == pygame.K_w or event.key == pygame.K_UP:
+                    direction = "up"
+                elif event.key == pygame.K_s or event.key == pygame.K_DOWN:
+                    direction = "down"
+                elif event.key == pygame.K_a or event.key == pygame.K_LEFT:
+                    direction = "left"
+                elif event.key == pygame.K_d or event.key == pygame.K_RIGHT:
+                    direction = "right"
+                else:
+                    continue
+
+                for box in board.get_grid_as_list():
+                    box.slide_frames = 0
+
+                board.move_boxes(direction)
+                board.print_grid(board.grid)
+                # board.add_random_box()
 
         # Display Graphics
         screen.fill(BACKGROUND)
@@ -104,5 +125,7 @@ if __name__ == "__main__":
     main()
 
 # TODO
-# Movement logic
+# Fix velocity movement
 # Point System
+
+# C:\Users\s12710216\AppData\Local\Git\bin\git.exe

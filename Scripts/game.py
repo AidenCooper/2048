@@ -1,4 +1,3 @@
-from copy import deepcopy
 from itertools import chain
 from random import choice
 from random import randint
@@ -13,9 +12,14 @@ class Box:
         self.frame_update = 30
         self.update_image = False
 
+        # Start the slide and go for this many frames
         self.slide_frames = 0
+        # The pre updated number during slide that is being shown
         self.slide_number = None
+        # Starting position of slide where position immediatly updates to end position
         self.slide_position = None
+        # Forces the box to slide to this position instead of end position
+        self.slide_combine_position = None
 
     def get_image(self, path):
         if self.slide_number == None:
@@ -24,37 +28,25 @@ class Box:
         return path + str(self.slide_number) + ".png"
 
     def velocity_move(self):
-        # When slide is done update number
-        if self.slide_frames == 0 and not self.slide_number == None:
-            self.slide_number = None
-            self.update_image = True
+        if not self.slide_frames == 0:
+            self.slide_frames -= 1
 
-        # When slide is done update box location
-        if self.slide_frames == 0 and not self.slide_position == None:
+            position_location = Board.get_position_location(self.position)
+            slide_location = []
+            if self.slide_combine_position == None:
+                slide_location = Board.get_position_location(
+                    self.slide_position)
+            else:
+                slide_location = Board.get_position_location(
+                    self.slide_combine_position)
+
+            velocity = [(slide_location[0] - position_location[0])/self.frame_update,
+                        (slide_location[1] - position_location[0])/self.frame_update]
+
+            self.update_image = True
+        elif self.slide_frames == 0 and (not self.slide_position == None or not self.slide_combine_position == None):
             self.slide_position = None
-            self.current_location = Board.get_position_location(self.position)
-            self.update_image = True
-
-        # Slide logic
-        if not self.slide_frames == 0 and not self.slide_position == None:
-            correct_position_location = Board.get_position_location(
-                self.position)
-            correct_slide_location = Board.get_position_location(
-                self.slide_position)
-
-            # Takes: 15 frames = Time: 1/2 a second with 30FPS < -Less clean. +Less resources
-            # Takes: 30 frames = Time: 1/2 a second with 60FPS < +More clean. -More resources
-            velocity = [(correct_position_location[0] - correct_slide_location[0])/self.frame_update,
-                        (correct_position_location[1] - correct_slide_location[1])/self.frame_update]
-
-            self.current_location[0] += velocity[0]
-            self.current_location[1] += velocity[1]
-
-            self.slide_frames -= 1
-            self.update_image = True
-        # For delayed number change
-        elif not self.slide_frames == 0 and self.slide_position == None:
-            self.slide_frames -= 1
+            self.slide_combine_position = None
 
 
 class Board:
@@ -63,8 +55,8 @@ class Board:
             0, i + 1), Box(0, i + 2), Box(0, i + 3)], [0, 4, 8, 12]))
         self.points = 0
 
-        self.add_random_box()
-        self.add_random_box()
+        # self.add_random_box()
+        # self.add_random_box()
 
     # Static helper functions
     @staticmethod
@@ -120,6 +112,7 @@ class Board:
 
     def can_move_box(self):
         grid = self.get_grid_as_list()
+
         if list(filter(lambda box: box.number == 0, grid)):
             return True
 
@@ -141,7 +134,94 @@ class Board:
         return False
 
     def move_boxes(self, direction):
-        return
+        if direction == "up":
+            for i in range(4):
+                combined_pos = None
+                for j in range(1, 4):
+                    for k in range(j - 1, -1, -1):
+                        if self.grid[j][i].number == 0:
+                            break
+                        elif self.grid[k][i].number == 0 and k == 0:
+                            self.slide_box(j * 4 + i, k * 4 + i)
+                            break
+                        elif not self.grid[k][i].number == 0 and not self.grid[k][i].number == self.grid[j][i].number:
+                            if not k + 1 == j and self.grid[k + 1][i].number == 0:
+                                self.slide_box(j * 4 + i, (k + 1) * 4 + i)
+                            break
+                        elif self.grid[k][i].number == self.grid[k][i].number and combined_pos == k:
+                            if not k + 1 == j and self.grid[k + 1][i].number == 0:
+                                self.slide_box(j * 4 + i, (k + 1) * 4 + i)
+                            break
+                        elif self.grid[k][i].number == self.grid[j][i].number and not combined_pos == k:
+                            combined_pos = k
+                            self.slide_box(j * 4 + i, k * 4 + i)
+                            break
+        elif direction == "down":
+            for i in range(3, -1, -1):
+                combined_pos = None
+                for j in range(2, -1, -1):
+                    for k in range(j + 1, 4):
+                        if self.grid[j][i].number == 0:
+                            break
+                        elif self.grid[k][i].number == 0 and k == 3:
+                            self.slide_box(j * 4 + i, k * 4 + i)
+                            break
+                        elif not self.grid[k][i].number == 0 and not self.grid[k][i].number == self.grid[j][i].number:
+                            if not k - 1 == j and self.grid[k - 1][i].number == 0:
+                                self.slide_box(j * 4 + i, (k - 1) * 4 + i)
+                            break
+                        elif self.grid[k][i].number == self.grid[k][i].number and combined_pos == k:
+                            if not k - 1 == j and self.grid[k - 1][i].number == 0:
+                                self.slide_box(j * 4 + i, (k - 1) * 4 + i)
+                            break
+                        elif self.grid[k][i].number == self.grid[j][i].number and not combined_pos == k:
+                            combined_pos = k
+                            self.slide_box(j * 4 + i, k * 4 + i)
+                            break
+        elif direction == "left":
+            for i in range(4):
+                combined_pos = None
+                for j in range(1, 4):
+                    for k in range(j - 1, -1, -1):
+                        if self.grid[i][j].number == 0:
+                            break
+                        elif self.grid[i][k].number == 0 and k == 0:
+                            self.slide_box(i * 4 + j, i * 4 + k)
+                            break
+                        elif not self.grid[i][k].number == 0 and not self.grid[i][k].number == self.grid[i][j].number:
+                            if not k + 1 == j and self.grid[i][k + 1].number == 0:
+                                self.slide_box(i * 4 + j, i * 4 + (k + 1))
+                            break
+                        elif self.grid[i][k].number == self.grid[i][k].number and combined_pos == k:
+                            if not k + 1 == j and self.grid[i][k + 1].number == 0:
+                                self.slide_box(i * 4 + j, i * 4 + (k + 1))
+                            break
+                        elif self.grid[i][k].number == self.grid[i][j].number and not combined_pos == k:
+                            combined_pos = k
+                            self.slide_box(i * 4 + j, i * 4 + k)
+                            break
+        elif direction == "right":
+            for i in range(3, -1, -1):
+                combined_pos = None
+                for j in range(2, -1, -1):
+                    for k in range(j + 1, 4):
+                        if self.grid[i][j].number == 0:
+                            break
+                        elif self.grid[i][k].number == 0 and k == 3:
+                            self.slide_box(i * 4 + j, i * 4 + k)
+                            break
+                        elif not self.grid[i][k].number == 0 and not self.grid[i][k].number == self.grid[i][j].number:
+                            if not k - 1 == j and self.grid[i][k - 1].number == 0:
+                                self.slide_box(i * 4 + j, i * 4 + (k - 1))
+                            break
+                        elif self.grid[i][k].number == self.grid[i][k].number and combined_pos == k:
+                            if not k - 1 == j and self.grid[i][k - 1].number == 0:
+                                self.slide_box(i * 4 + j, i * 4 + (k - 1))
+                            break
+                        elif self.grid[i][k].number == self.grid[i][j].number and not combined_pos == k:
+                            combined_pos = k
+                            self.slide_box(i * 4 + j, i * 4 + k)
+                            break
 
     # Can only slide to zeros and combinable numbers
     def slide_box(self, box_position, box_to_position):
@@ -151,30 +231,28 @@ class Board:
         if box_to.number == 0:
             box.slide_position = box.position
             box.position = box_to.position
-
             box.slide_frames = box.frame_update
 
             box_to.position = box.slide_position
-            box_to.update_image
+            box_to.slide_frames = box_to.frame_update
         else:
             box.slide_position = box.position
             box.position = box_to.position
-
             box.slide_number = box.number
             box.number *= 2
-
             box.slide_frames = box.frame_update
 
+            box_to.slide_combine_position = box_to.position
             box_to.position = box.slide_position
-
             box_to.slide_number = box_to.number
             box_to.number = 0
-
             box_to.slide_frames = box_to.frame_update
+
+        box.update_image = True
+        box_to.update_image = True
 
         box_index = self.index_to_2d(box.position)
         box_to_index = self.index_to_2d(box_to.position)
 
         self.grid[box_index[0]][box_index[1]] = box
         self.grid[box_to_index[0]][box_to_index[1]] = box_to
-        self.print_grid(self.grid)
